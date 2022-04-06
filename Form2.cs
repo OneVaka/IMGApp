@@ -22,6 +22,8 @@ namespace IMGApp
 
         Bitmap Gistogram = new Bitmap(256, 1000);
 
+        static List<Point> graphPointsList = new List<Point>();
+
         public Form2()
         {
             InitializeComponent();
@@ -39,6 +41,9 @@ namespace IMGApp
             //Даем есть установку - всегда заполнять всю возможную область
             canvas1.Dock = DockStyle.Fill;
 
+
+            graphPointsList.Add(new Point(0, graphPanel.Height - 1));
+            graphPointsList.Add(new Point(graphPanel.Width-1, 0));
         }
 
 
@@ -122,7 +127,7 @@ namespace IMGApp
                 new_g_layer1.SmoothingMode = SmoothingMode.HighQuality;
                 new_g_layer2.SmoothingMode = SmoothingMode.HighQuality;
 
-
+                
                 //график квадрата
                 for (int i = 0; i < new_layer1.Width; i++)
                 {
@@ -193,8 +198,31 @@ namespace IMGApp
 
                 g_layer1.FillRectangle(Brushes.Navy, mouse_pos.X-3, mouse_pos.Y-3, 6, 6);
 
+
+
+                graphPointsList.Add(mouse_pos);
+
+                g_layer1.Clear(Color.FromArgb(0, 0, 0, 0));
+                foreach(var graphPoint in graphPointsList)
+                {
+                    g_layer1.FillRectangle(Brushes.Navy, graphPoint.X-3, graphPoint.Y-3, 6, 6);
+                }
+
+                if (graphPointsList.Count > 1)
+                {
+                    graphPointsList.Sort(Compare);
+                    g_layer1.DrawCurve(Pens.Red, graphPointsList.ToArray());
+                }
+                
+
+                return;
             }
 
+
+            public static int Compare(Point p1,Point p2)
+            {
+                return p1.X.CompareTo(p2.X);
+            }
 
 
             private void MyCanvas_MouseMove(object sender, MouseEventArgs e)
