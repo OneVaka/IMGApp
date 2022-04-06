@@ -171,10 +171,20 @@ namespace IMGApp
                     f.FillEllipse(Brushes.White, rect);
                 }
 
+                using (var f = Graphics.FromImage(firstImage))
+                {
+                    int x = (firstImage.Width+firstImage.Height) / 4;
+                    var rect = new RectangleF((firstImage.Width - x) / 2, (firstImage.Height - x) / 2, x, x);
+                    f.FillEllipse(Brushes.Black, rect);
+                }
+
                 for (int k = 0; k < h - 1; k++)
                 {
                     for (int m = 0; m < w - 1; m++)
                     {
+                        var pixFirst = firstImage.GetPixel(m,k);
+
+
                         //считывыем пиксель картинки и получаем его цвет
                         var pix = secondImage.GetPixel(m, k);
                         var pix2 = img_mask.GetPixel(m, k);
@@ -213,9 +223,9 @@ namespace IMGApp
                         b_new = b3;
 
                         var pix_out = Color.FromArgb(
-                     r_new,
-                     g_new,
-                     b_new);
+                     r_new!=0 ? r_new: pixFirst.R,
+                     g_new!=0 ? g_new: pixFirst.G,
+                     b_new!=0 ? b_new: pixFirst.B);
 
                         finalImage.SetPixel(m, k, pix_out);
 

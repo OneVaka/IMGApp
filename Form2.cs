@@ -122,14 +122,17 @@ namespace IMGApp
                 new_g_layer1.SmoothingMode = SmoothingMode.HighQuality;
                 new_g_layer2.SmoothingMode = SmoothingMode.HighQuality;
 
+
+                //график квадрата
                 for (int i = 0; i < new_layer1.Width; i++)
                 {
-                  //  new_g_layer1.DrawLine(Pens.Black, i, new_layer1.Height - 1 - (i*i), i+1, new_layer1.Height - 1 - Clamp((i+1)*(i+1),0,new_layer1.Height-1) );
+                    new_g_layer1.DrawLine(Pens.Black, i, new_layer1.Height - 1 - ((i*i)/new_layer1.Height), i+1, 
+                                                           new_layer1.Height - 1 - Clamp((i+1)*(i+1)/new_layer1.Height,0,new_layer1.Height-1) );
 
                 }
 
 
-                new_g_layer1.DrawLine(Pens.Black, 0, new_layer1.Height - 1, new_layer1.Width - 1, 0);
+               // new_g_layer1.DrawLine(Pens.Black, 0, new_layer1.Height - 1, new_layer1.Width - 1, 0);
                 new_g_layer2.DrawLine(Pens.Black, 0, new_layer2.Height - 1, new_layer2.Width - 1, 0);
 
 
