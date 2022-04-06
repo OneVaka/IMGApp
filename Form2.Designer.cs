@@ -31,15 +31,17 @@ namespace IMGApp
         {
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureGist = new System.Windows.Forms.PictureBox();
+            this.graphPanel = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureGist)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(12, 12);
+            this.pictureBox1.Location = new System.Drawing.Point(14, 16);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(823, 577);
+            this.pictureBox1.Size = new System.Drawing.Size(737, 623);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -49,20 +51,31 @@ namespace IMGApp
             // pictureGist
             // 
             this.pictureGist.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.pictureGist.Location = new System.Drawing.Point(12, 595);
+            this.pictureGist.Location = new System.Drawing.Point(781, 16);
+            this.pictureGist.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.pictureGist.Name = "pictureGist";
-            this.pictureGist.Size = new System.Drawing.Size(800, 200);
+            this.pictureGist.Size = new System.Drawing.Size(351, 286);
             this.pictureGist.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureGist.TabIndex = 1;
             this.pictureGist.TabStop = false;
             // 
+            // graphPanel
+            // 
+            this.graphPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.graphPanel.Location = new System.Drawing.Point(781, 318);
+            this.graphPanel.Name = "graphPanel";
+            this.graphPanel.Size = new System.Drawing.Size(351, 321);
+            this.graphPanel.TabIndex = 2;
+            // 
             // Form2
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1038, 802);
+            this.ClientSize = new System.Drawing.Size(1446, 684);
+            this.Controls.Add(this.graphPanel);
             this.Controls.Add(this.pictureGist);
             this.Controls.Add(this.pictureBox1);
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "Form2";
             this.Text = "Form2";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -75,5 +88,6 @@ namespace IMGApp
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureGist;
+        private System.Windows.Forms.Panel graphPanel;
     }
 }
