@@ -16,6 +16,7 @@ namespace IMGApp
     public partial class Form2 : Form
     {
 
+        Bitmap imageOriginal = null;
         Bitmap image = null;
 
         int[] gist_values = new int[256];
@@ -108,6 +109,8 @@ namespace IMGApp
                 pen.Dispose();
             }
 
+
+
             private void MyCanvas_SizeChanged(object sender, EventArgs e)
             {
                 var _sender = sender as MyCanvas;
@@ -127,15 +130,16 @@ namespace IMGApp
                 new_g_layer1.SmoothingMode = SmoothingMode.HighQuality;
                 new_g_layer2.SmoothingMode = SmoothingMode.HighQuality;
 
-                
+
                 //график квадрата
-                for (int i = 0; i < new_layer1.Width; i++)
-                {
-                    new_g_layer1.DrawLine(Pens.Black, i, new_layer1.Height - 1 - ((i*i)/new_layer1.Height), i+1, 
-                                                           new_layer1.Height - 1 - Clamp((i+1)*(i+1)/new_layer1.Height,0,new_layer1.Height-1) );
+                //for (int i = 0; i < new_layer1.Width; i++)
+                //{
+                //    new_g_layer1.DrawLine(Pens.Black, i, new_layer1.Height - 1 - ((i*i)/new_layer1.Height), i+1, 
+                //                                           new_layer1.Height - 1 - Clamp((i+1)*(i+1)/new_layer1.Height,0,new_layer1.Height-1) );
+                //
+                //}
 
-                }
-
+                new_g_layer1.DrawLine(Pens.Black, new Point(0,255), new Point(255,0));
 
                // new_g_layer1.DrawLine(Pens.Black, 0, new_layer1.Height - 1, new_layer1.Width - 1, 0);
                 new_g_layer2.DrawLine(Pens.Black, 0, new_layer2.Height - 1, new_layer2.Width - 1, 0);
@@ -211,12 +215,16 @@ namespace IMGApp
                 if (graphPointsList.Count > 1)
                 {
                     graphPointsList.Sort(Compare);
-                    g_layer1.DrawCurve(Pens.Red, graphPointsList.ToArray());
+                    //g_layer1.DrawCurve(Pens.Red, graphPointsList.ToArray());
+                    g_layer1.DrawLines(Pens.Red, graphPointsList.ToArray());
                 }
-                
+
+          
 
                 return;
             }
+
+
 
 
             public static int Compare(Point p1,Point p2)
@@ -239,6 +247,21 @@ namespace IMGApp
             }
 
 
+            public void CanvaClear()
+            {
+                g_layer1.Clear(Color.FromArgb(0, 0, 0, 0));
+                foreach (var graphPoint in graphPointsList)
+                {
+                    g_layer1.FillRectangle(Brushes.Navy, graphPoint.X - 3, graphPoint.Y - 3, 6, 6);
+                }
+
+                if (graphPointsList.Count > 1)
+                {
+                    graphPointsList.Sort(Compare);
+                    g_layer1.DrawCurve(Pens.Red, graphPointsList.ToArray());
+                }
+            }
+
         }
     
 
@@ -250,6 +273,8 @@ namespace IMGApp
             openFileDialog.Filter = "Картинки (png, jpg, bmp, gif) |*.png;*.jpg;*.bmp;*.gif|All files (*.*)|*.*";
             openFileDialog.RestoreDirectory = true;
 
+            
+
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 if (image != null)
@@ -257,7 +282,7 @@ namespace IMGApp
 
                 
                 image = new Bitmap(openFileDialog.FileName);
-
+                imageOriginal = new Bitmap(openFileDialog.FileName);
 
                 int x = 0;
 
@@ -280,11 +305,11 @@ namespace IMGApp
 
 
                         //применение квадратной функции
-                        int R = (byte)Clamp((pix.R*pix.R)/255   , 0,255);
-                        int G = (byte)Clamp((pix.G*pix.G)/255   , 0,255);
-                        int B = (byte)Clamp((pix.B*pix.B)/255   , 0,255);
+                       //int R = (byte)Clamp((pix.R*pix.R)/255   , 0,255);
+                       //int G = (byte)Clamp((pix.G*pix.G)/255   , 0,255);
+                       //int B = (byte)Clamp((pix.B*pix.B)/255   , 0,255);
                        
-                        image.SetPixel(i,j, Color.FromArgb(R, G, B));
+                       // image.SetPixel(i,j, Color.FromArgb(R, G, B));
                     }
 
 
@@ -316,12 +341,6 @@ namespace IMGApp
            
         }
 
-        void refresh()
-        {
-            pictureBox1.Update();
-        }
-
-
 
 
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
@@ -331,5 +350,287 @@ namespace IMGApp
             else return val;
         }
 
-    }
+        private void clearCanvasButton_Click(object sender, EventArgs e)
+        {
+            if (graphPointsList.Count > 2)
+                graphPointsList.RemoveRange(1, graphPointsList.Count - 2);
+
+            var con = this.graphPanel.Controls[0] as MyCanvas;
+            con.CanvaClear();
+
+            if (imageOriginal != null)
+                getIntered();
+
+            return;
+        }
+
+
+
+#region inter
+
+         void getIntered()
+         {
+            if (image == null)
+                return;
+
+            for (int i = 0; i < image.Width; i++)
+                for (int j = 0; j < image.Height; j++)
+                {
+                    var pix = imageOriginal.GetPixel(i, j);
+
+                    int R = 0, G = 0, B = 0;
+
+
+                    //x = Clamp((pix.R + pix.G + pix.B) / 3, 0, 255);
+                    
+                   
+                    {
+                        var x0 = graphPointsList.Where(item => item.X < pix.R).LastOrDefault();
+                        if (x0.IsEmpty)
+                            x0 = graphPointsList.Find(item => item.X == pix.R);
+
+                        var x1 = graphPointsList.Where(item => item.X > pix.R).FirstOrDefault();
+                        if(x1.IsEmpty)
+                            x1 = graphPointsList.Find(item => item.X == pix.R);
+
+                        R = x0.Y - 255 + ((x1.Y - x0.Y) / (x1.X - x0.X)) * (pix.R - x0.X);//y(x0) + ( (y(x1)-y(x0)) / (x1-x0) ) * (x - x0)
+
+                        R = Math.Abs(R);
+                    }
+                   
+                    {
+                        var x0 = graphPointsList.Where(item => item.X < pix.G).LastOrDefault();
+                        if (x0.IsEmpty)
+                            x0 = graphPointsList.Find(item => item.X == pix.G);
+
+                        var x1 = graphPointsList.Where(item => item.X > pix.G).FirstOrDefault();
+                        if (x1.IsEmpty)
+                            x1 = graphPointsList.Find(item => item.X == pix.G);
+
+                        G = x0.Y - 255 + ((x1.Y - x0.Y) / (x1.X - x0.X)) * (pix.G - x0.X);//y(x0) + ( (y(x1)-y(x0)) / (x1-x0) ) * (x - x0)
+
+                        G = Math.Abs(G);
+                    }
+
+                    {
+                        var x0 = graphPointsList.Where(item => item.X < pix.B).LastOrDefault(); 
+                        if (x0.IsEmpty)
+                            x0 = graphPointsList.Find(item => item.X == pix.B);
+
+                        var x1 = graphPointsList.Where(item => item.X > pix.B).FirstOrDefault();
+                        if (x1.IsEmpty)
+                            x1 = graphPointsList.Find(item => item.X == pix.B);
+
+                        B = x0.Y - 255 + ((x1.Y - x0.Y) / (x1.X - x0.X)) * (pix.B - x0.X);//y(x0) + ( (y(x1)-y(x0)) / (x1-x0) ) * (x - x0)
+
+                        B = Math.Abs(B);
+                    }
+
+                    //применение квадратной функции
+                    //R = (byte)Clamp((pix.R * pix.R) / 255, 0, 255);
+                    //G = (byte)Clamp((pix.G * pix.G) / 255, 0, 255);
+                    //B = (byte)Clamp((pix.B * pix.B) / 255, 0, 255);
+
+                    image.SetPixel(i, j, Color.FromArgb(R, G, B));
+                }
+            pictureBox1.Image = image;
+
+
+            int x = 0;
+
+            for (int i = 0; i < gist_values.Length; i++)
+            {
+                gist_values[i] = 0;
+            }
+
+            for (int i = 0; i < image.Width; i++)
+                for (int j = 0; j < image.Height; j++)
+                {
+                    var pix = image.GetPixel(i, j);
+
+
+                    x = Clamp((pix.R + pix.G + pix.B) / 3, 0, 255);
+
+                    gist_values[x]++;
+
+
+
+
+                    //применение квадратной функции
+                    //int R = (byte)Clamp((pix.R*pix.R)/255   , 0,255);
+                    //int G = (byte)Clamp((pix.G*pix.G)/255   , 0,255);
+                    //int B = (byte)Clamp((pix.B*pix.B)/255   , 0,255);
+
+                }
+
+
+            if (Gistogram.Height != pictureGist.Height)
+                Gistogram = MyImage.ResizeImg(Gistogram, Gistogram.Width, this.pictureGist.Height);
+
+            using (var graphic = Graphics.FromImage(Gistogram))
+            {
+
+
+                graphic.Clear(Color.White);
+
+                double koef = (double)pictureGist.Height / gist_values.Max();
+
+                for (int i = 0; i < gist_values.Length; i++)
+                    graphic.FillRectangle(Brushes.DarkSlateGray, i, 0, 1, Clamp(Convert.ToInt32(gist_values[i] * koef), 0, 999));
+
+
+            }
+            Gistogram.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+
+
+            pictureGist.Image = Gistogram;
+
+
+
+
+
+        }
+
+
+        // newY = y(x0) + ( (y(x1)-y(x0)) / (x1-x0) ) * (x - x0)
+
+
+
+        #endregion
+
+        private void interedButton_Click(object sender, EventArgs e)
+        {
+            getIntered();
+        }
+
+        private void reverseButton_Click(object sender, EventArgs e)
+        {
+            if (image == null)
+                return;
+
+            for (int i = 0; i < image.Width; i++)
+                    for (int j = 0; j < image.Height; j++)
+                    {
+                        var pix = imageOriginal.GetPixel(i, j);
+
+                        int R = 0, G = 0, B = 0;
+
+
+                        //x = Clamp((pix.R + pix.G + pix.B) / 3, 0, 255);
+
+
+                        {
+                            var x0 = graphPointsList.Where(item => item.X < pix.R).LastOrDefault();
+                            if (x0.IsEmpty)
+                                x0 = graphPointsList.Find(item => item.X == pix.R);
+
+                            var x1 = graphPointsList.Where(item => item.X > pix.R).FirstOrDefault();
+                            if (x1.IsEmpty)
+                                x1 = graphPointsList.Find(item => item.X == pix.R);
+
+                            R = x0.Y  + ((x1.Y - x0.Y) / (x1.X - x0.X)) * (pix.R - x0.X);//y(x0) + ( (y(x1)-y(x0)) / (x1-x0) ) * (x - x0)
+
+                            R = Math.Abs(R);
+                        }
+
+                        {
+                            var x0 = graphPointsList.Where(item => item.X < pix.G).LastOrDefault();
+                            if (x0.IsEmpty)
+                                x0 = graphPointsList.Find(item => item.X == pix.G);
+
+                            var x1 = graphPointsList.Where(item => item.X > pix.G).FirstOrDefault();
+                            if (x1.IsEmpty)
+                                x1 = graphPointsList.Find(item => item.X == pix.G);
+
+                            G = x0.Y  + ((x1.Y - x0.Y) / (x1.X - x0.X)) * (pix.G - x0.X);//y(x0) + ( (y(x1)-y(x0)) / (x1-x0) ) * (x - x0)
+
+                            G = Math.Abs(G);
+                        }
+
+                        {
+                            var x0 = graphPointsList.Where(item => item.X < pix.B).LastOrDefault();
+                            if (x0.IsEmpty)
+                                x0 = graphPointsList.Find(item => item.X == pix.B);
+
+                            var x1 = graphPointsList.Where(item => item.X > pix.B).FirstOrDefault();
+                            if (x1.IsEmpty)
+                                x1 = graphPointsList.Find(item => item.X == pix.B);
+
+                            B = x0.Y  + ((x1.Y - x0.Y) / (x1.X - x0.X)) * (pix.B - x0.X);//y(x0) + ( (y(x1)-y(x0)) / (x1-x0) ) * (x - x0)
+
+                            B = Math.Abs(B);
+                        }
+
+                        //применение квадратной функции
+                        //R = (byte)Clamp((pix.R * pix.R) / 255, 0, 255);
+                        //G = (byte)Clamp((pix.G * pix.G) / 255, 0, 255);
+                        //B = (byte)Clamp((pix.B * pix.B) / 255, 0, 255);
+
+                        image.SetPixel(i, j, Color.FromArgb(R, G, B));
+                    }
+             
+            
+            
+            pictureBox1.Image = image;
+
+
+                int x = 0;
+
+                for (int i = 0; i < gist_values.Length; i++)
+                {
+                    gist_values[i] = 0;
+                }
+
+                for (int i = 0; i < image.Width; i++)
+                    for (int j = 0; j < image.Height; j++)
+                    {
+                        var pix = image.GetPixel(i, j);
+
+
+                        x = Clamp((pix.R + pix.G + pix.B) / 3, 0, 255);
+
+                        gist_values[x]++;
+
+
+
+
+                        //применение квадратной функции
+                        //int R = (byte)Clamp((pix.R*pix.R)/255   , 0,255);
+                        //int G = (byte)Clamp((pix.G*pix.G)/255   , 0,255);
+                        //int B = (byte)Clamp((pix.B*pix.B)/255   , 0,255);
+
+                    }
+
+
+                if (Gistogram.Height != pictureGist.Height)
+                    Gistogram = MyImage.ResizeImg(Gistogram, Gistogram.Width, this.pictureGist.Height);
+
+                using (var graphic = Graphics.FromImage(Gistogram))
+                {
+
+
+                    graphic.Clear(Color.White);
+
+                     var max = gist_values.Max() > 1000 ? 1000 : gist_values.Max();
+
+                    double koef = (double)pictureGist.Height / gist_values.Max();
+
+                    for (int i = 0; i < gist_values.Length; i++)
+                        graphic.FillRectangle(Brushes.DarkSlateGray, i, 0, 1, Clamp(Convert.ToInt32(gist_values[i] * koef), 0, 999));
+
+
+                }
+                Gistogram.RotateFlip(RotateFlipType.RotateNoneFlipY);
+
+
+
+                pictureGist.Image = Gistogram;
+
+
+
+
+
+            }
+        }
 }
