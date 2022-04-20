@@ -91,6 +91,10 @@ namespace IMGApp
             else return val;
         }
 
+
+
+        //Getting threshold value by arithmetic mean from all pixels
+        //Рассчет порогового значения с помощью среднеарифметического яркости всех пикселей
         private void buttonGavr_Click(object sender, EventArgs e)
         {
             imageBinar = new Bitmap(imageMono.Width, imageMono.Height); 
@@ -119,12 +123,13 @@ namespace IMGApp
                 }
             }
 
+            buttonGavr.BackColor = SystemColors.ActiveCaption;
             pictureBox2.Image = imageBinar;
         }
 
         private void buttonOtsu_Click(object sender, EventArgs e)
         {
-
+            
         }
 
         private void buttonNiblack_Click(object sender, EventArgs e)
