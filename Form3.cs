@@ -199,7 +199,63 @@ namespace IMGApp
 
         private void buttonNiblack_Click(object sender, EventArgs e)
         {
+            double sensitivity = -0.2;
+            int n = 15;
+            int[,] pix_matrix = new int[n,n];
 
+            int n_forMatrix = (int)Math.Floor((double)n / 2);
+
+            for (int i = 0; i < imageMono.Height; i++)
+
+                for (int j = 0; j < imageMono.Width; j++)
+                {
+                    
+                    var pix = imageMono.GetPixel(j,i);
+                    pix_matrix[n_forMatrix, n_forMatrix] = pix.R;   //центр матрицы
+
+                    double math_expec = 0.0;
+                    double math_expec_powered = 0.0;
+                    double math_dispersion = 0.0;
+
+                    for (int i_matrix = 0; i_matrix < n; i_matrix++)
+                    {
+                        for(int j_matrix = 0; j_matrix < n; j_matrix++)
+                        {
+                            if ((i - n_forMatrix + i_matrix) == n_forMatrix && (j - n_forMatrix + j_matrix) == n_forMatrix)
+                                continue;
+
+                            if((j - n_forMatrix + j_matrix) >= 0 && (j - n_forMatrix + j_matrix) < imageMono.Width)
+
+                                if((i - n_forMatrix + i_matrix) >=0 && (i - n_forMatrix + i_matrix) < imageMono.Height)
+
+                                    pix_matrix[i_matrix, j_matrix] = imageMono.GetPixel(j - n_forMatrix + j_matrix, i - n_forMatrix + i_matrix).R;
+                            //-----------------------------------------------------
+                                else { pix_matrix[i_matrix, j_matrix] = 0; }
+                            else { pix_matrix[i_matrix, j_matrix] = 0; }
+
+
+                            math_expec += pix_matrix[i_matrix, j_matrix];
+                            math_expec_powered  += Math.Pow(pix_matrix[i_matrix, j_matrix],2);
+                        }
+
+                    }
+
+                    math_expec /= (n * n);
+                    math_expec_powered /= (n * n);
+                    math_dispersion = math_expec_powered - Math.Pow(math_expec,2);
+
+                    double avg_deviation = Math.Sqrt(math_dispersion);
+
+                    int local_threshold = Clamp((int)(math_expec + sensitivity * avg_deviation), 0,255);
+
+                    imageBinar.SetPixel(j,i,
+                       pix.R <= local_threshold ? Color.Black : Color.White);
+
+
+                }
+
+            buttonGavr.BackColor = SystemColors.ActiveCaption;
+            pictureBox2.Image = imageBinar;
         }
 
         private void buttonSauvola_Click(object sender, EventArgs e)
