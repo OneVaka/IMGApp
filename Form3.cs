@@ -335,6 +335,101 @@ namespace IMGApp
 
         private void buttonWolf_Click(object sender, EventArgs e)
         {
+            double sensitivity = 0.5;
+            int n = 15;
+            int[,] pix_matrix = new int[n, n];
+
+            int n_forMatrix = (int)Math.Floor((double)n / 2);
+
+
+            progressBar1.Maximum = (imageMono.Height * imageMono.Width);
+            progressBar1.Step = 1;
+
+
+            int tyskliy_pixel = 128;
+
+            int[,] img_pix_matrix = new int[imageMono.Width, imageMono.Height];
+
+            int[,] math_expec_matrix = new int[imageMono.Width, imageMono.Height];
+            int[,] deviation_matrix = new int[imageMono.Width, imageMono.Height];
+            double deviation_max = 0.0;
+
+            for (int i = 0; i < imageMono.Height; i++)
+
+                for (int j = 0; j < imageMono.Width; j++)
+                {
+
+                    var pix = imageMono.GetPixel(j, i);
+                    pix_matrix[n_forMatrix, n_forMatrix] = pix.R;   //центр матрицы
+
+                    double math_expec = 0.0;
+                    double math_expec_powered = 0.0;
+                    double math_dispersion = 0.0;
+
+                    for (int i_matrix = 0; i_matrix < n; i_matrix++)
+                    {
+                        for (int j_matrix = 0; j_matrix < n; j_matrix++)
+                        {
+                            if ((i - n_forMatrix + i_matrix) == n_forMatrix && (j - n_forMatrix + j_matrix) == n_forMatrix)
+                                continue;
+
+                            if ((j - n_forMatrix + j_matrix) >= 0 && (j - n_forMatrix + j_matrix) < imageMono.Width)
+
+                                if ((i - n_forMatrix + i_matrix) >= 0 && (i - n_forMatrix + i_matrix) < imageMono.Height)
+
+                                    pix_matrix[i_matrix, j_matrix] = imageMono.GetPixel(j - n_forMatrix + j_matrix, i - n_forMatrix + i_matrix).R;
+                                //-----------------------------------------------------
+                                else { pix_matrix[i_matrix, j_matrix] = 0; }
+                            else { pix_matrix[i_matrix, j_matrix] = 0; }
+
+
+                            math_expec += pix_matrix[i_matrix, j_matrix];
+                            math_expec_powered += Math.Pow(pix_matrix[i_matrix, j_matrix], 2);
+                        }
+
+                    }
+
+                    math_expec /= (n * n);
+                    math_expec_powered /= (n * n);
+                    math_dispersion = math_expec_powered - Math.Pow(math_expec, 2);
+
+                    double avg_deviation = Math.Sqrt(math_dispersion);
+
+                    math_expec_matrix[j, i] = (int)math_expec;
+                    deviation_matrix[j, i] = (int)avg_deviation;
+                    img_pix_matrix[j, i] = pix.R;
+
+
+                    if (avg_deviation > deviation_max)
+                        deviation_max = avg_deviation;
+
+                    if (tyskliy_pixel > pix.R)
+                        tyskliy_pixel = pix.R;
+
+                    progressBar1.PerformStep();
+
+                }
+
+
+            for (int i = 0; i < imageBinar.Height; i++)
+            {
+                for (int j = 0; j < imageBinar.Width; j++)
+                {
+
+                      int local_threshold = Clamp((int)( (1-sensitivity) * math_expec_matrix[j,i] 
+                                                            + sensitivity * tyskliy_pixel 
+                                                            + sensitivity * (deviation_matrix[j,i] / deviation_max) * (math_expec_matrix[j, i] - tyskliy_pixel)     ),
+                                                          0, 255);
+
+                      imageBinar.SetPixel(j, i,
+                         img_pix_matrix[j,i] <= local_threshold ? Color.Black : Color.White);
+
+                }
+            }
+
+            pictureBox2.Image = imageBinar;
+            progressBar1.Value = 0;
+            progressBar1.Refresh();
 
         }
 
