@@ -53,6 +53,8 @@ namespace IMGApp
 
                 imageMono = makeMono(imageOriginal);
 
+                imageBinar = new Bitmap(imageMono.Width, imageMono.Height);
+
                 pictureBox1.Image = imageOriginal;
                 pictureBox2.Image = imageMono;
             }
@@ -97,19 +99,19 @@ namespace IMGApp
         //Рассчет порогового значения с помощью среднеарифметического яркости всех пикселей
         private void buttonGavr_Click(object sender, EventArgs e)
         {
-            imageBinar = new Bitmap(imageMono.Width, imageMono.Height); 
+           // imageBinar = new Bitmap(imageMono.Width, imageMono.Height); 
 
 
-            double porog = 0;
+            double threshold = 0.0;
             for (int i = 0; i < imageMono.Width; i++)
             {
                 for (int j = 0; j < imageMono.Height; j++)
                 {
-                    porog += imageMono.GetPixel(i, j).R;
+                    threshold += imageMono.GetPixel(i, j).R;
                 }
             }
 
-            porog /= (imageMono.Width*imageMono.Height);
+            threshold /= (imageMono.Width*imageMono.Height);
 
 
             for (int i = 0; i < imageMono.Width; i++)
@@ -119,7 +121,7 @@ namespace IMGApp
                     var biPix = imageMono.GetPixel(i, j);
 
                     imageBinar.SetPixel(i, j,
-                        biPix.R <= (byte)porog ? Color.Black : Color.White);
+                        biPix.R <= (byte)threshold ? Color.Black : Color.White);
                 }
             }
 
@@ -127,9 +129,72 @@ namespace IMGApp
             pictureBox2.Image = imageBinar;
         }
 
+        //Рассчет порогового значения с помощью алгоритма Отсу
+        //https://ru.wikipedia.org/wiki/%D0%9C%D0%B5%D1%82%D0%BE%D0%B4_%D0%9E%D1%86%D1%83
         private void buttonOtsu_Click(object sender, EventArgs e)
         {
-            
+            ///imageMono; // нужно расчитать threshgold
+
+            var all_intensity_sum = 0.0;
+            //gistogramma
+            int[] gist_values = new int[256];
+            for (int i = 0; i < imageMono.Width; i++)
+                for (int j = 0; j < imageMono.Height; j++)
+                {
+                    var pix = imageMono.GetPixel(i, j);
+
+                    all_intensity_sum += pix.R;
+
+                    gist_values[pix.R]++;
+                }
+
+            int best_thresh = 0;
+            double best_sigma = 0.0;
+
+            int first_class_pixel_count = 0;
+            int first_class_intensity_sum = 0;
+
+           
+
+            for (int thresh = 0; thresh < 255 ; ++thresh)
+            {
+                first_class_pixel_count += gist_values[thresh];
+                first_class_intensity_sum += thresh * gist_values[thresh];
+
+                double first_class_prob = first_class_pixel_count / (double)(imageMono.Width * imageMono.Height);
+                double second_class_prob = 1.0 - first_class_prob;
+
+                double first_class_mean = first_class_intensity_sum / (double)first_class_pixel_count;
+                double second_class_mean = (all_intensity_sum - first_class_intensity_sum)
+                    / (double)(imageMono.Width * imageMono.Height - first_class_pixel_count);
+
+                double mean_delta = first_class_mean - second_class_mean;
+
+                double sigma = first_class_prob * second_class_prob * mean_delta * mean_delta;
+
+                if (sigma > best_sigma)
+                {
+                    best_sigma = sigma;
+                    best_thresh = thresh;
+                }
+            }
+
+
+            for (int i = 0; i < imageMono.Width; i++)
+            {
+                for (int j = 0; j < imageMono.Height; j++)
+                {
+                    var biPix = imageMono.GetPixel(i, j);
+
+                    imageBinar.SetPixel(i, j,
+                        biPix.R <= (byte)best_thresh ? Color.Black : Color.White);
+                }
+            }
+
+
+            buttonGavr.BackColor = SystemColors.ActiveCaption;
+            pictureBox2.Image = imageBinar;
+
         }
 
         private void buttonNiblack_Click(object sender, EventArgs e)
