@@ -435,6 +435,72 @@ namespace IMGApp
 
         private void buttonBradley_Click(object sender, EventArgs e)
         {
+            int n = 15;
+            double sensitivity = 0.15;
+
+            int[,] S = new int[imageMono.Width, imageMono.Height];
+            int[,] pixels = new int[imageMono.Width, imageMono.Height];
+
+
+            progressBar1.Maximum = (imageMono.Height * imageMono.Width);
+            progressBar1.Step = 1;
+
+            for (int i = 0; i < imageMono.Width; i++)
+            {
+                for (int j = 0; j < imageMono.Height; j++)
+                {
+
+                    var pix = imageMono.GetPixel(i, j);
+
+                    S[i, j] = pix.R +
+                                (i - 1 >= 0 ? S[i - 1, j] : 0) + 
+                                 (j - 1 >= 0 ? S[i, j - 1] : 0) - 
+                                  (i-1 >= 0 && j-1 >= 0 ? S[i - 1, j - 1] : 0);
+
+                    pixels[i, j] = pix.R;
+
+                }
+            }
+
+            for (int i = 0; i < imageMono.Width; i++)
+            {
+                int x_min = i - n + 1;// + 1;
+                x_min = (x_min < 0) ? 0 : x_min;
+
+                int x_max = i + n - 1;
+                x_max = (x_max >= imageMono.Width) ? imageMono.Width - 1 : x_max;
+
+                for (int j = 0; j < imageMono.Height; j++)
+                {
+                    int sum = 0;
+
+                    int y_min = j - n + 1;//  + 1;
+                    y_min = (y_min < 0) ? 0 : y_min;
+
+                    int y_max = j +  n - 1;
+                    y_max = (y_max >= imageMono.Height) ? imageMono.Height - 1 : y_max;
+
+
+                    sum = S[x_max, y_max] +
+                           ((x_min >= 1 && y_min >=1) ? S[x_min - 1, y_min - 1] : 0) -
+                             ((x_min >= 1 )? S[x_min - 1, y_max] : 0) -
+                              ((y_min >= 1)? S[x_max, y_min - 1] : 0);
+                        
+
+                    int count = (x_max - x_min + 1) * (y_max - y_min + 1);
+
+
+                    imageBinar.SetPixel(i, j,
+                         (count * pixels[i,j]  <= (1 - sensitivity) * sum) ? Color.Black : Color.White);
+
+                    progressBar1.PerformStep();
+                }
+               
+            }
+
+            pictureBox2.Image = imageBinar;
+            progressBar1.Value = 0;
+            progressBar1.Refresh();
 
         }
     }
