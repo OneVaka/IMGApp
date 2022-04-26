@@ -33,9 +33,11 @@ namespace IMGApp
             try
             {
                 Form2 form2 = new Form2();
-                form2.Show();
+                //form2.Show();
                 Form3 form3 = new Form3();
-                form3.Show();
+                //form3.Show();
+                Form4 form4 = new Form4();
+                form4.Show();
             }
             catch
             {
