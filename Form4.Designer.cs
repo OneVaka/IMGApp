@@ -33,7 +33,13 @@
             this.label_time = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label_progress = new System.Windows.Forms.Label();
+            this.numeric_gauss_size = new System.Windows.Forms.NumericUpDown();
+            this.numeric_gauss_sigma = new System.Windows.Forms.NumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numeric_gauss_size)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numeric_gauss_sigma)).BeginInit();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -48,9 +54,12 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(819, 37);
+            this.button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DimGray;
+            this.button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            this.button1.Font = new System.Drawing.Font("Segoe UI Semibold", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button1.Location = new System.Drawing.Point(815, 20);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(94, 29);
+            this.button1.Size = new System.Drawing.Size(113, 96);
             this.button1.TabIndex = 1;
             this.button1.Text = "Gauss";
             this.button1.UseVisualStyleBackColor = true;
@@ -81,11 +90,74 @@
             this.label_progress.TabIndex = 5;
             this.label_progress.Text = "Waiting for command...";
             // 
+            // numeric_gauss_size
+            // 
+            this.numeric_gauss_size.Increment = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.numeric_gauss_size.Location = new System.Drawing.Point(1089, 37);
+            this.numeric_gauss_size.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numeric_gauss_size.Name = "numeric_gauss_size";
+            this.numeric_gauss_size.Size = new System.Drawing.Size(73, 27);
+            this.numeric_gauss_size.TabIndex = 6;
+            this.numeric_gauss_size.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // numeric_gauss_sigma
+            // 
+            this.numeric_gauss_sigma.Location = new System.Drawing.Point(1089, 89);
+            this.numeric_gauss_sigma.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numeric_gauss_sigma.Name = "numeric_gauss_sigma";
+            this.numeric_gauss_sigma.Size = new System.Drawing.Size(73, 27);
+            this.numeric_gauss_sigma.TabIndex = 7;
+            this.numeric_gauss_sigma.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label1.Location = new System.Drawing.Point(934, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(135, 46);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Размерность \r\nматрицы Гаусса";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.label2.Location = new System.Drawing.Point(934, 70);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(149, 46);
+            this.label2.TabIndex = 9;
+            this.label2.Text = "Сигма\r\nуравнения Гаусса";
+            // 
             // Form4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1239, 803);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.numeric_gauss_sigma);
+            this.Controls.Add(this.numeric_gauss_size);
             this.Controls.Add(this.label_progress);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label_time);
@@ -94,7 +166,10 @@
             this.Name = "Form4";
             this.Text = "Form4";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numeric_gauss_size)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numeric_gauss_sigma)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -105,5 +180,9 @@
         private System.Windows.Forms.Label label_time;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label_progress;
+        private System.Windows.Forms.NumericUpDown numeric_gauss_size;
+        private System.Windows.Forms.NumericUpDown numeric_gauss_sigma;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label2;
     }
 }

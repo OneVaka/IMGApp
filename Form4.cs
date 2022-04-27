@@ -15,7 +15,7 @@ namespace IMGApp
     public partial class Form4 : Form
     {
         Bitmap image_original = null;
-
+        Bitmap image_modified = null;
 
         public Form4()
         {
@@ -27,11 +27,11 @@ namespace IMGApp
 
 
         /// <summary>
-        /// Применение маски Гаусса к загруженному изображению
+        /// Применение маски Гаусса к загруженному изображению c заданными параметрами
         /// </summary>
-        void MaskGauss()
+        void MaskGauss(int sigma, int radius)
         {
-            double[,] gauss_matrix = GaussCoefs();
+            double[,] gauss_matrix = GaussCoefs(sigma,radius);
 
             Color[,] image_matrix = new Color[image_original.Width, image_original.Height];
             Color[,] image_matrix_temp = new Color[image_original.Width, image_original.Height];
@@ -64,19 +64,21 @@ namespace IMGApp
                 }
             }
 
+
             label_progress.Text = "Setting pixels";
             label_progress.Refresh();
             for (int i = 0; i < image_original.Width; i++)
             {
                 for (int j = 0; j < image_original.Height; j++)
                 {
-                    image_original.SetPixel(i, j, image_matrix[i, j]);
+                    image_modified.SetPixel(i, j, image_matrix[i, j]);
                     progressBar1.Value++;
                 }
             }
 
-            
-            pictureBox1.Image = image_original;
+            progressBar1.Value = 0;
+
+            pictureBox1.Image = image_modified;
             label_progress.Text = "";
 
         }
@@ -193,9 +195,12 @@ namespace IMGApp
                 if (image_original != null)
                     image_original.Dispose();
 
-
                 image_original = new Bitmap(openFileDialog.FileName);
 
+                if (image_modified != null)
+                    image_modified.Dispose();
+
+                image_modified = new Bitmap(image_original.Width,image_original.Height);
                 
                 pictureBox1.Image = image_original;
             }
@@ -209,12 +214,14 @@ namespace IMGApp
             if(image_original == null)
                 return;
 
+            int gauss_sigma = (int)numeric_gauss_sigma.Value;
+            int gauss_size = (int)numeric_gauss_size.Value;
 
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
 
 
-            MaskGauss();
+            MaskGauss(gauss_sigma,gauss_size);
 
             stopwatch.Stop();
 
@@ -234,5 +241,7 @@ namespace IMGApp
         {
 
         }
+
+ 
     }
 }
