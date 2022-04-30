@@ -21,7 +21,16 @@ namespace IMGApp
         {
             InitializeComponent();
         }
+        private void Form4_Load(object sender, EventArgs e)
+        {
+            custom_mask_Grid.ColumnCount = (int)numeric_custom_width.Value;
+            custom_mask_Grid.RowCount = (int)numeric_custom_height.Value;
 
+
+
+            custom_mask_Grid.Refresh();
+
+        }
 
 
 
@@ -180,7 +189,11 @@ namespace IMGApp
         }
 
 
-        //Загрузка изображения
+        /// <summary>
+        /// Обработка клика по изображению формы (загрузка нового изображения)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             using OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -207,8 +220,12 @@ namespace IMGApp
         }
 
 
-        //Применение маски Гаусса к загруженному изображению
-        private void button1_Click(object sender, EventArgs e)
+        /// <summary>
+        /// Кнопка применения маски Гаусса к загруженному изображению
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_gauss_Click(object sender, EventArgs e)
         {
 
             if(image_original == null)
@@ -229,7 +246,14 @@ namespace IMGApp
             label_time.Refresh();
         }
 
-
+        /// <summary>
+        /// Клэм Гавра
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="val"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
         public static T Clamp<T>(T val, T min, T max) where T : IComparable<T>
         {
             if (val.CompareTo(min) < 0) return min;
@@ -237,11 +261,186 @@ namespace IMGApp
             else return val;
         }
 
-        private void label1_Click(object sender, EventArgs e)
+
+        /// <summary>
+        /// кнопка для применения кастомной маски из формы
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_custom_Click(object sender, EventArgs e)
         {
+
+            if (image_original == null)
+                return;
+
+
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            double[,] custom_mask = new double[(int)numeric_custom_width.Value, (int)numeric_custom_height.Value];
+
+            for (int i = 0; i < custom_mask.GetLength(0); i++)
+            {
+                for (int j = 0; j < custom_mask.GetLength(1); j++)
+                {
+                    custom_mask[i, j] = Convert.ToDouble(custom_mask_Grid.Rows[j].Cells[i].Value);
+                }
+            }
+
+
+            MaskCustom(custom_mask);
+
+            stopwatch.Stop();
+
+            label_time.Text = "Elapsed time: " + stopwatch.Elapsed.TotalSeconds + "s";
+            label_time.Refresh();
+            
+
+            return;
+        }
+
+
+        /// <summary>
+        /// Применение кастомной маски к загруженному изображению
+        /// </summary>
+        /// <param name="custom_mask"></param>
+        void MaskCustom(double[,] custom_mask)
+        {
+            
+            Color[,] image_matrix = new Color[image_original.Width, image_original.Height];
+            Color[,] image_matrix_temp = new Color[image_original.Width, image_original.Height];
+
+            progressBar1.Maximum = image_original.Width * image_original.Height * 3;
+
+            //-----------------------------------------------------
+            label_progress.Text = "Getting pixels";
+            label_progress.Refresh();
+
+            for (int i = 0; i < image_original.Width; i++)
+            {
+                for (int j = 0; j < image_original.Height; j++)
+                {
+
+                    var pixel = image_original.GetPixel(i, j);
+                    image_matrix_temp[i, j] = pixel;
+
+                    progressBar1.Value++;
+                }
+            }
+
+            //------------------------------------------------------
+            label_progress.Text = "Applying mask";
+            label_progress.Refresh();
+
+
+            for (int i = 0; i < image_original.Width; i++)
+            {
+                for (int j = 0; j < image_original.Height; j++)
+                {
+                    image_matrix[i, j] = ApplyMaskCustom(image_matrix_temp, custom_mask, i, j);
+                    progressBar1.Value++;
+                }
+            }
+
+            //---------------------------------------------------------
+            label_progress.Text = "Setting pixels";
+            label_progress.Refresh();
+
+            for (int i = 0; i < image_original.Width; i++)
+            {
+                for (int j = 0; j < image_original.Height; j++)
+                {
+                    image_modified.SetPixel(i, j, image_matrix[i, j]);
+                    progressBar1.Value++;
+                }
+            }
+
+            progressBar1.Value = 0;
+
+            pictureBox1.Image = image_modified;
+            label_progress.Text = "";
 
         }
 
- 
+        /// <summary>
+        /// Применение кастомной маски к пикселю изображения
+        /// </summary>
+        /// <param name="image"></param>
+        /// <param name="mask"></param>
+        /// <param name="index_x"></param>
+        /// <param name="index_y"></param>
+        /// <returns>Обработанный пиксель изображения</returns>
+        Color ApplyMaskCustom(Color[,] image,double[,] mask,int index_x,int index_y)
+        {
+            /// <!--Делать временное изображение для расчета здесь??-->
+            /// Тогда нужно каждый раз создавать заново, если вызываеттся для пикселя
+
+           int mask_Width = mask.GetLength(0);
+           int mask_Height = mask.GetLength(1);
+
+            int mask_Width_div_by2 = (int)Math.Floor(mask_Width / 2.0);
+            int mask_Height_div_by2 = (int)Math.Floor(mask_Height / 2.0);
+
+            int sum_R=0, sum_G=0, sum_B =0;
+
+            int fixed_index_x;
+                int fixed_index_y;
+
+            for (int n = 0; n < mask_Width; n++)
+            {
+                for (int m = 0; m < mask_Height; m++)
+                {
+
+                    //  if (index_x - mask_Width_div_by2 + n < 0 || index_y - mask_Height_div_by2 + m < 0)
+                    //      continue;
+                    //  if (index_x - mask_Width_div_by2 + n >= image.GetLength(0) || index_y - mask_Height_div_by2 + m >= image.GetLength(1))
+                    //      continue;
+
+                    fixed_index_x = (index_x - mask_Width_div_by2 + n < 0) || (index_x - mask_Width_div_by2 + n >= image.GetLength(0)) 
+                                                ? index_x + mask_Width_div_by2 - n : index_x - mask_Width_div_by2 + n;
+
+                    fixed_index_y = (index_y - mask_Height_div_by2 + m < 0) || (index_y - mask_Height_div_by2 + m >= image.GetLength(1))
+                                                ? index_y + mask_Height_div_by2 - m : index_y - mask_Height_div_by2 + m;
+                  
+                    sum_R += (int)(image[fixed_index_x, fixed_index_y].R * mask[n, m]);
+
+                    sum_G += (int)(image[fixed_index_x, fixed_index_y].G * mask[n, m]);
+
+                    sum_B += (int)(image[fixed_index_x, fixed_index_y].B * mask[n, m]);
+
+
+                }
+            }
+
+            return (Color.FromArgb((int)Clamp(sum_R, 0, 255), (int)Clamp(sum_G, 0, 255), (int)Clamp(sum_B, 0, 255)));
+
+
+        }
+
+
+
+       
+
+        /// <summary>
+        /// Изменение ширины кастомной матрицы
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void numeric_custom_width_ValueChanged(object sender, EventArgs e)
+        {
+            custom_mask_Grid.ColumnCount = (int)numeric_custom_width.Value;
+
+        }
+        /// <summary>
+        /// Изменение Высоты кастомной матрицы
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void numeric_custom_height_ValueChanged(object sender, EventArgs e)
+        {
+            custom_mask_Grid.RowCount = (int)numeric_custom_height.Value;
+
+        }
     }
 }
