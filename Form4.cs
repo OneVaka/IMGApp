@@ -442,5 +442,125 @@ namespace IMGApp
             custom_mask_Grid.RowCount = (int)numeric_custom_height.Value;
 
         }
+
+        /// <summary>
+        /// Кнопка для применения медианной фильтрации
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_median_Click(object sender, EventArgs e)
+        {
+            if (image_original == null)
+                return;
+
+
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            MedianFilter();
+
+
+            stopwatch.Stop();
+
+            label_time.Text = "Elapsed time: " + stopwatch.Elapsed.TotalSeconds + "s";
+            label_time.Refresh();
+        }
+
+        void MedianFilter()
+        {
+            
+
+            Color[,] image_matrix = new Color[image_original.Width, image_original.Height];
+            Color[,] image_matrix_temp = new Color[image_original.Width, image_original.Height];
+
+            progressBar1.Maximum = image_original.Width * image_original.Height * 3;
+
+            label_progress.Text = "Getting pixels";
+            label_progress.Refresh();
+
+            for (int i = 0; i < image_original.Width; i++)
+            {
+                for (int j = 0; j < image_original.Height; j++)
+                {
+
+                    var pixel = image_original.GetPixel(i, j);
+                    image_matrix_temp[i, j] = pixel;
+
+                    progressBar1.Value++;
+                }
+            }
+
+            label_progress.Text = "Applying mask";
+            label_progress.Refresh();
+
+
+            for (int i = 0; i < image_original.Width; i++)
+            {
+                for (int j = 0; j < image_original.Height; j++)
+                {
+                    image_matrix[i, j] = MedianFilterMask(image_matrix_temp, i, j,(int) numeric_custom_width.Value, (int)numeric_custom_height.Value);
+                }
+            }
+
+
+            label_progress.Text = "Setting pixels";
+            label_progress.Refresh();
+            for (int i = 0; i < image_original.Width; i++)
+            {
+                for (int j = 0; j < image_original.Height; j++)
+                {
+                    image_modified.SetPixel(i, j, image_matrix[i, j]);
+                    progressBar1.Value++;
+                }
+            }
+
+            progressBar1.Value = 0;
+
+            pictureBox1.Image = image_modified;
+            label_progress.Text = "";
+
+
+        }
+
+        Color MedianFilterMask(Color[,] image_matrix, int index_x, int index_y, int mask_width, int mask_height)
+        {
+
+            List<byte> colors_R = new List<byte>();
+            List<byte> colors_G = new List<byte>();
+            List<byte> colors_B = new List<byte>();
+
+
+            int width_by_two = (int)Math.Floor(mask_width / 2.0);
+            int height_by_two = (int)Math.Floor(mask_height / 2.0);
+
+            int sum_elements = 0;
+
+            for (int i = 0; i < mask_width; i++)
+            {
+                for (int j = 0; j < mask_height; j++)
+                {
+                    if (index_x - width_by_two + i < 0 || index_x - width_by_two + i >= image_matrix.GetLength(0))
+                        continue;
+                    if (index_y - height_by_two + j < 0 || index_y - height_by_two + j >= image_matrix.GetLength(1))
+                        continue;
+
+
+                    colors_R.Add(image_matrix[index_x - width_by_two + i, index_y - height_by_two + j].R);
+                    colors_G.Add(image_matrix[index_x - width_by_two + i, index_y - height_by_two + j].G);
+                    colors_B.Add(image_matrix[index_x - width_by_two + i, index_y - height_by_two + j].B);
+
+                    sum_elements++;
+                }
+            }
+
+            sum_elements /= 2;
+
+            colors_R.Sort();
+            colors_G.Sort();
+            colors_B.Sort();
+
+            return (Color.FromArgb( colors_R[sum_elements],colors_G[sum_elements],colors_B[sum_elements] ));
+
+        }
     }
 }

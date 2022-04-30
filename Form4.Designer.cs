@@ -44,6 +44,7 @@
             this.numeric_custom_width = new System.Windows.Forms.NumericUpDown();
             this.numeric_custom_height = new System.Windows.Forms.NumericUpDown();
             this.custom_mask_Grid = new System.Windows.Forms.DataGridView();
+            this.button_median = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numeric_gauss_size)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numeric_gauss_sigma)).BeginInit();
@@ -173,7 +174,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label3.Location = new System.Drawing.Point(934, 169);
+            this.label3.Location = new System.Drawing.Point(934, 149);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(79, 23);
             this.label3.TabIndex = 11;
@@ -183,7 +184,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label4.Location = new System.Drawing.Point(1085, 169);
+            this.label4.Location = new System.Drawing.Point(939, 182);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(70, 23);
             this.label4.TabIndex = 12;
@@ -191,7 +192,7 @@
             // 
             // numeric_custom_width
             // 
-            this.numeric_custom_width.Location = new System.Drawing.Point(1015, 169);
+            this.numeric_custom_width.Location = new System.Drawing.Point(1015, 149);
             this.numeric_custom_width.Minimum = new decimal(new int[] {
             3,
             0,
@@ -209,7 +210,7 @@
             // 
             // numeric_custom_height
             // 
-            this.numeric_custom_height.Location = new System.Drawing.Point(1161, 169);
+            this.numeric_custom_height.Location = new System.Drawing.Point(1015, 182);
             this.numeric_custom_height.Minimum = new decimal(new int[] {
             3,
             0,
@@ -251,11 +252,23 @@
             this.custom_mask_Grid.Size = new System.Drawing.Size(410, 201);
             this.custom_mask_Grid.TabIndex = 15;
             // 
+            // button_median
+            // 
+            this.button_median.Font = new System.Drawing.Font("Segoe UI Semibold", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            this.button_median.Location = new System.Drawing.Point(1104, 148);
+            this.button_median.Name = "button_median";
+            this.button_median.Size = new System.Drawing.Size(113, 65);
+            this.button_median.TabIndex = 16;
+            this.button_median.Text = "Median";
+            this.button_median.UseVisualStyleBackColor = true;
+            this.button_median.Click += new System.EventHandler(this.button_median_Click);
+            // 
             // Form4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1239, 803);
+            this.Controls.Add(this.button_median);
             this.Controls.Add(this.custom_mask_Grid);
             this.Controls.Add(this.numeric_custom_height);
             this.Controls.Add(this.numeric_custom_width);
@@ -302,5 +315,6 @@
         private System.Windows.Forms.NumericUpDown numeric_custom_width;
         private System.Windows.Forms.NumericUpDown numeric_custom_height;
         private System.Windows.Forms.DataGridView custom_mask_Grid;
+        private System.Windows.Forms.Button button_median;
     }
 }
