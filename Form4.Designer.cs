@@ -109,7 +109,7 @@
             0});
             this.numeric_gauss_size.Location = new System.Drawing.Point(1089, 37);
             this.numeric_gauss_size.Minimum = new decimal(new int[] {
-            1,
+            3,
             0,
             0,
             0});
@@ -117,7 +117,7 @@
             this.numeric_gauss_size.Size = new System.Drawing.Size(73, 27);
             this.numeric_gauss_size.TabIndex = 6;
             this.numeric_gauss_size.Value = new decimal(new int[] {
-            1,
+            3,
             0,
             0,
             0});
@@ -192,6 +192,11 @@
             // 
             // numeric_custom_width
             // 
+            this.numeric_custom_width.Increment = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
             this.numeric_custom_width.Location = new System.Drawing.Point(1015, 149);
             this.numeric_custom_width.Minimum = new decimal(new int[] {
             3,
@@ -210,6 +215,11 @@
             // 
             // numeric_custom_height
             // 
+            this.numeric_custom_height.Increment = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
             this.numeric_custom_height.Location = new System.Drawing.Point(1015, 182);
             this.numeric_custom_height.Minimum = new decimal(new int[] {
             3,

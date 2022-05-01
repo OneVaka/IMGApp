@@ -171,6 +171,9 @@ namespace IMGApp
         /// <returns>Четвертая часть матрицы Гаусса</returns>
         double[,] GaussCoefs(int sig = 3,int r = 9 )
         {
+            //как радиус начиная от 0;0
+            r = (int)Math.Ceiling(r / 2.0);
+
             int sig_squared = sig * sig;
 
             double[,] gauss_coefs = new double[r,r];
@@ -499,6 +502,9 @@ namespace IMGApp
                 for (int j = 0; j < image_original.Height; j++)
                 {
                     image_matrix[i, j] = MedianFilterMask(image_matrix_temp, i, j,(int) numeric_custom_width.Value, (int)numeric_custom_height.Value);
+
+                    progressBar1.Value++;
+
                 }
             }
 
