@@ -38,6 +38,8 @@ namespace IMGApp
                 //form3.Show();
                 Form4 form4 = new Form4();
                 form4.Show();
+                Form5 form5 = new Form5();
+                form5.Show();
             }
             catch
             {
