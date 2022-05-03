@@ -153,9 +153,9 @@ namespace IMGApp
             {
                 for (int j = 0; j < height; j++)
                 {
-                    image_Red[i, j] =   new Complex(fourier_Red[i,j].Real, -fourier_Red[i,j].Imaginary);
+                    image_Red[i, j] =   new Complex(fourier_Red[i,j].Real,    -fourier_Red[i,j].Imaginary);
                     image_Green[i, j] = new Complex(fourier_Green[i, j].Real, -fourier_Green[i, j].Imaginary);
-                    image_Blue[i, j] =  new Complex(fourier_Blue[i, j].Real, -fourier_Blue[i, j].Imaginary);
+                    image_Blue[i, j] =  new Complex(fourier_Blue[i, j].Real,  -fourier_Blue[i, j].Imaginary);
                 }
             }
 
@@ -169,8 +169,8 @@ namespace IMGApp
                 for (int j = 0; j < height; j++)
                 {                                               
                     temp_Red[j] =   image_Red[i, j]     ;
-                    temp_Green[j] = image_Green[i, j] ;
-                    temp_Blue[j] =  image_Blue[i, j]   ;
+                    temp_Green[j] = image_Green[i, j]   ;
+                    temp_Blue[j] =  image_Blue[i, j]    ;
                 }
 
                 temp_Red = DFT(temp_Red,    true);
@@ -198,15 +198,15 @@ namespace IMGApp
                     temp_Green[i] = image_Green[i, j];
                     temp_Blue[i] = image_Blue[i, j];
                 }
-                temp_Red = DFT(temp_Red);
-                temp_Green = DFT(temp_Green);
-                temp_Blue = DFT(temp_Blue);
+                temp_Red = DFT(temp_Red, true);
+                temp_Green = DFT(temp_Green, true);
+                temp_Blue = DFT(temp_Blue, true);
 
                 for (int i = 0; i < width; i++)
                 {                                      //центрирование         
-                    image_Red[i, j] = temp_Red[i]      * Math.Pow(-1, i+j) ;
-                    image_Green[i, j] = temp_Green[i]  * Math.Pow(-1, i+j) ;
-                    image_Blue[i, j] = temp_Blue[i] * Math.Pow(-1, i + j);
+                    image_Red[i, j] = temp_Red[i]       * Math.Pow(-1, i+j) ;
+                    image_Green[i, j] = temp_Green[i]   * Math.Pow(-1, i+j) ;
+                    image_Blue[i, j] = temp_Blue[i]     * Math.Pow(-1, i+j);
                 }
 
             }
@@ -218,7 +218,10 @@ namespace IMGApp
                 for (int j = 0; j < height; j++)
                 {
                     new_img.SetPixel(i,j,
-                        Color.FromArgb(Clamp((int)image_Red[i, j].Real, 0, 255), Clamp((int)image_Green[i, j].Real, 0, 255), Clamp((int)image_Blue[i, j].Real , 0,255)));
+                        Color.FromArgb(
+                            Clamp((int)image_Red[i, j].Real, 0, 255), 
+                            Clamp((int)image_Green[i, j].Real, 0, 255), 
+                            Clamp((int)image_Blue[i, j].Real , 0, 255)));
                 }
             }
 
@@ -338,7 +341,7 @@ namespace IMGApp
 
             GetFourierImage(fourier_Red,fourier_Green,fourier_Blue);
 
-           // FourierToImage(fourier_Red, fourier_Green, fourier_Blue);
+            FourierToImage(fourier_Red, fourier_Green, fourier_Blue);
 
             return;
         }
