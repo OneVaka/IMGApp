@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -25,6 +27,8 @@ namespace IMGApp
         Complex[,] fourier_Red = null;
         Complex[,] fourier_Green = null;
         Complex[,] fourier_Blue = null;
+
+        Bitmap fourier_image = null;
 
         private void pictureBox1_Click(object sender, EventArgs e)
         {
@@ -265,7 +269,7 @@ namespace IMGApp
             int width = Red.GetLength(0);
             int height = Red.GetLength(1);
 
-            Bitmap fourier_image = new Bitmap(width, height);
+            fourier_image = new Bitmap(width, height, PixelFormat.Format24bppRgb);
 
             double max_red =0, max_green=0, max_blue=0;
 
@@ -315,6 +319,31 @@ namespace IMGApp
 
         }
 
+        Bitmap ChangeBrightness(Bitmap img_org)
+        {
+
+            byte[] img_bytes;
+            img_bytes = getImgBytes(img_org);
+            int f_multiplier = (int)numeric_fourier_brightness.Value;
+
+            img_bytes = img_bytes.Select(value => (byte)Clamp(value * f_multiplier,0,255)).ToArray();
+
+
+            Bitmap img = new Bitmap(img_org.Width,img_org.Height, img_org.PixelFormat);
+
+            writeImageBytes(img, img_bytes);
+
+           // for (int i = 0; i < img.Height; i++)
+           // {
+           //     for (int j = 0; j < img.Width; j+=3)
+           //     {
+           //         img.SetPixel(j,i, Color.FromArgb(img_bytes[i*3+2], img_bytes[i*3+1], img_bytes[i*3]));
+           //     }
+           // }
+
+            return img;
+        }
+
 
         /// <summary>
         /// Клэм Гавра
@@ -331,11 +360,36 @@ namespace IMGApp
             else return val;
         }
 
+        static byte[] getImgBytes(Bitmap img)
+        {
+            byte[] bytes = new byte[img.Width * img.Height * 3];  //выделяем память под массив байтов
+            var data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height),  //блокируем участок памати, занимаемый изображением
+                ImageLockMode.ReadOnly,
+                img.PixelFormat);
+            Marshal.Copy(data.Scan0, bytes, 0, bytes.Length);  //копируем байты изображения в массив
+            img.UnlockBits(data);   //разблокируем изображение
+            return bytes; //возвращаем байты
+        }
+
+        static void writeImageBytes(Bitmap img, byte[] bytes)
+        {
+            var data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height),  //блокируем участок памати, занимаемый изображением
+                ImageLockMode.WriteOnly,
+                img.PixelFormat);
+            Marshal.Copy(bytes, 0, data.Scan0, bytes.Length); //копируем байты массива в изображение
+
+            img.UnlockBits(data);  //разблокируем изображение
+        }
+
+
 
         private void button1_Click(object sender, EventArgs e)
         {
             if (image_original == null)
                 return;
+
+            numeric_fourier_brightness.Value = 1;
+            numeric_fourier_brightness.Refresh();
 
             ImageToFourier(image_matrix);
 
@@ -344,6 +398,15 @@ namespace IMGApp
             FourierToImage(fourier_Red, fourier_Green, fourier_Blue);
 
             return;
+        }
+
+        private void numeric_fourier_brightness_ValueChanged(object sender, EventArgs e)
+        {
+            if (image_original == null || pictureBox_fourier.Image == null)
+                return;
+
+            pictureBox_fourier.Image = ChangeBrightness(fourier_image);
+            pictureBox_fourier.Refresh();
         }
     }
 
