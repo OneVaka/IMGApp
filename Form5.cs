@@ -12,6 +12,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+
+
+using System.Drawing.Drawing2D;
+
+
 namespace IMGApp
 {
     public partial class Form5 : Form
@@ -52,6 +57,11 @@ namespace IMGApp
             }
         }
 
+        /// <summary>
+        /// Создает матрицу со значениями Color полученного Bitmap 
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
         Color[,] GetImageMatrix(Bitmap image)
         {
             Color[,] image_matrix = new Color[image_original.Width, image_original.Height];
@@ -68,6 +78,10 @@ namespace IMGApp
             return image_matrix;
         }
 
+        /// <summary>
+        /// Получение Фурье образа для каждого канала изображения изображения 
+        /// </summary>
+        /// <param name="image"></param>
         void ImageToFourier(Color[,] image) {
 
             int width = image.GetLength(0);
@@ -143,6 +157,12 @@ namespace IMGApp
         
         }
 
+        /// <summary>
+        /// Получение исходного изображения из его Фурье образа и вывод его в форму
+        /// </summary>
+        /// <param name="fourier_Red">Фурье образ красного канала</param>
+        /// <param name="fourier_Green">Фурье образ зеленого канала</param>
+        /// <param name="fourier_Blue">Фурье образ синего канала</param>
         void FourierToImage(Complex[,] fourier_Red, Complex[,] fourier_Green, Complex[,] fourier_Blue) {
 
             int width = fourier_Red.GetLength(0);
@@ -229,6 +249,10 @@ namespace IMGApp
                 }
             }
 
+
+            if (new_img.Width != image_original.Width || new_img.Height != image_original.Height)
+                new_img = ResizeImg(new_img, image_original.Width, image_original.Height);
+
             pictureBox2.Image = new_img;
             pictureBox2.Refresh();
 
@@ -236,6 +260,13 @@ namespace IMGApp
 
         }
 
+
+        /// <summary>
+        /// Одномерное Фурье преобразование
+        /// </summary>
+        /// <param name="input_array">Входной массив</param>
+        /// <param name="reverse">Параметр обратного преобразования</param>
+        /// <returns>Фурье образ массива или исходный массив</returns>
         Complex[] DFT(Complex[] input_array, bool reverse = false )
         {
             int count = input_array.Length;
@@ -262,7 +293,12 @@ namespace IMGApp
 
         }
 
-
+        /// <summary>
+        /// Создание изображения самого Фурье образа и вывод на форму
+        /// </summary>
+        /// <param name="Red">Фурье красный канал</param>
+        /// <param name="Green">Фурье зеленый канал</param>
+        /// <param name="Blue">Фурье синий канал</param>
         void GetFourierImage(Complex[,] Red, Complex[,] Green, Complex[,] Blue)
         {
 
@@ -319,12 +355,17 @@ namespace IMGApp
 
         }
 
-        Bitmap ChangeBrightness(Bitmap img_org)
+        /// <summary>
+        /// Измененение яркости изображения
+        /// </summary>
+        /// <param name="img_org">Изображение</param>
+        /// <param name="f_multiplier">Коэффициент яркости</param>
+        /// <returns>Изображение с измененнной яркостью</returns>
+        Bitmap ChangeBrightness(Bitmap img_org, int f_multiplier)
         {
 
             byte[] img_bytes;
             img_bytes = getImgBytes(img_org);
-            int f_multiplier = (int)numeric_fourier_brightness.Value;
 
             img_bytes = img_bytes.Select(value => (byte)Clamp(value * f_multiplier,0,255)).ToArray();
 
@@ -333,13 +374,6 @@ namespace IMGApp
 
             writeImageBytes(img, img_bytes);
 
-           // for (int i = 0; i < img.Height; i++)
-           // {
-           //     for (int j = 0; j < img.Width; j+=3)
-           //     {
-           //         img.SetPixel(j,i, Color.FromArgb(img_bytes[i*3+2], img_bytes[i*3+1], img_bytes[i*3]));
-           //     }
-           // }
 
             return img;
         }
@@ -359,7 +393,11 @@ namespace IMGApp
             else if (val.CompareTo(max) > 0) return max;
             else return val;
         }
-
+        /// <summary>
+        /// Получение байтов изображения Гавра
+        /// </summary>
+        /// <param name="img"></param>
+        /// <returns></returns>
         static byte[] getImgBytes(Bitmap img)
         {
             byte[] bytes = new byte[img.Width * img.Height * 3];  //выделяем память под массив байтов
@@ -370,7 +408,11 @@ namespace IMGApp
             img.UnlockBits(data);   //разблокируем изображение
             return bytes; //возвращаем байты
         }
-
+        /// <summary>
+        /// Запись байтов изображения Гавра
+        /// </summary>
+        /// <param name="img"></param>
+        /// <param name="bytes"></param>
         static void writeImageBytes(Bitmap img, byte[] bytes)
         {
             var data = img.LockBits(new Rectangle(0, 0, img.Width, img.Height),  //блокируем участок памати, занимаемый изображением
@@ -380,9 +422,11 @@ namespace IMGApp
 
             img.UnlockBits(data);  //разблокируем изображение
         }
-
-
-
+        /// <summary>
+        /// Кнопка создания образа Фурье из изображения, создание изображения образа, восстановление изображения 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void button1_Click(object sender, EventArgs e)
         {
             if (image_original == null)
@@ -395,20 +439,190 @@ namespace IMGApp
 
             GetFourierImage(fourier_Red,fourier_Green,fourier_Blue);
 
+            numeric_R1.Maximum = Math.Min(fourier_image.Width,fourier_image.Height);
+            numeric_R2.Maximum = Math.Min(fourier_image.Width,fourier_image.Height);
+
             FourierToImage(fourier_Red, fourier_Green, fourier_Blue);
 
             return;
         }
-
+        /// <summary>
+        /// Изменение значения яркости изображения фурье
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void numeric_fourier_brightness_ValueChanged(object sender, EventArgs e)
         {
             if (image_original == null || pictureBox_fourier.Image == null)
                 return;
 
-            pictureBox_fourier.Image = ChangeBrightness(fourier_image);
+            pictureBox_fourier.Image = ChangeBrightness(fourier_image, (int)numeric_fourier_brightness.Value);
             pictureBox_fourier.Refresh();
         }
+        /// <summary>
+        /// Кнопка применения радиального фультра к Фурье образу
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button_fourier_filter_Click(object sender, EventArgs e)
+        {
+            int filter_R1 = (int)numeric_R1.Value;
+            int filter_R2 = (int)numeric_R2.Value;
+
+
+            Pen pen = new Pen(Color.FromArgb(200, 255, 80, 0), 1);
+
+            Bitmap fourier_filter = new Bitmap(fourier_image);
+            Graphics graphics = Graphics.FromImage(fourier_filter);
+
+            int center_X = fourier_filter.Width / 2;
+            int center_Y = fourier_filter.Height / 2;
+
+            graphics.DrawEllipse(pen, center_X - filter_R1, center_Y- filter_R1, filter_R1*2,filter_R1*2);
+            graphics.DrawEllipse(pen, center_X - filter_R2, center_Y - filter_R2, filter_R2*2,filter_R2*2);
+
+            
+            FourierToImage(getMatrixRadius(fourier_Red, filter_R1), getMatrixRadius(fourier_Green, filter_R1), getMatrixRadius(fourier_Blue, filter_R1));
+
+
+            pictureBox_fourier.Image = fourier_filter;
+        }
+
+        /// <summary>
+        /// Получить из середины матрицы квадрат с радиусом radius
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="radius"></param>
+        /// <returns>Часть исходной матрицы</returns>
+        Complex[,] getMatrixRadius(Complex[,] matrix, int radius)
+        {
+
+            Complex[,] new_matrix = new Complex[radius*2,radius*2];
+
+            int x = 0;
+            int y = 0;
+
+            for (int i = -radius; i < radius; i++)
+            {
+                for (int j = -radius; j < radius; j++)
+                {
+
+
+                    new_matrix[x,y] = matrix[matrix.GetLength(0)/2 + i, matrix.GetLength(1) / 2 + j];
+
+                    y++;
+                }
+                x++;
+                y = 0;
+            }
+
+            return new_matrix;
+        }
+        /// <summary>
+        /// Получить из матрицы часть, не входящую в центральный квадрат радиусом radius
+        /// </summary>
+        /// <param name="matrix"></param>
+        /// <param name="radius"></param>
+        /// <returns>Часть исходной матрицы</returns>
+        Complex[,] getMatrixNotRadius(Complex[,] matrix, int radius)
+        {
+
+            Complex[,] new_matrix = new Complex[matrix.GetLength(0) - radius*2, matrix.GetLength(1)- radius * 2];
+
+            int x = 0;
+            int y = 0;
+
+            for (int i = 0; i < matrix.GetLength(0)-1; i++)
+            {
+                if (i > matrix.GetLength(0) / 2 - radius && i < matrix.GetLength(0) / 2 + radius)
+                {
+
+                    continue;
+                }
+
+                    for (int j = 0; j < matrix.GetLength(1)-1; j++)
+                    {
+                        if (j > matrix.GetLength(1) / 2 - radius && j < matrix.GetLength(1) / 2 + radius)
+                        {
+
+                        continue;
+                        }
+
+
+                        new_matrix[x, y] = matrix[i, j];
+
+                        y++;
+                    }
+                x++;
+                y = 0;
+            }
+
+            return new_matrix;
+        }
+        /// <summary>
+        /// Применение обратного радиального фильтра к Фурье образу
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button2_Click(object sender, EventArgs e)
+        {
+            int filter_R1 = (int)numeric_R1.Value;
+            int filter_R2 = (int)numeric_R2.Value;
+
+
+            Pen pen = new Pen(Color.FromArgb(200, 255, 80, 0), 1);
+
+            Bitmap fourier_filter = new Bitmap(fourier_image);
+            Graphics graphics = Graphics.FromImage(fourier_filter);
+
+            int center_X = fourier_filter.Width / 2;
+            int center_Y = fourier_filter.Height / 2;
+
+            graphics.DrawEllipse(pen, center_X - filter_R1, center_Y - filter_R1, filter_R1 * 2, filter_R1 * 2);
+            graphics.DrawEllipse(pen, center_X - filter_R2, center_Y - filter_R2, filter_R2 * 2, filter_R2 * 2);
+
+            
+            FourierToImage(getMatrixNotRadius(fourier_Red, filter_R1), getMatrixNotRadius(fourier_Green, filter_R1), getMatrixNotRadius(fourier_Blue, filter_R1));
+
+
+            pictureBox_fourier.Image = fourier_filter;
+        }
+            
+        private void numeric_R2_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numeric_R1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Изменение размера изображения
+        /// </summary>
+        /// <param name="b"></param>
+        /// <param name="nWidth"></param>
+        /// <param name="nHeight"></param>
+        /// <returns></returns>
+        public Bitmap ResizeImg(Bitmap b, int nWidth, int nHeight)
+        {
+            Bitmap result = new Bitmap(nWidth, nHeight);
+            using (Graphics g = Graphics.FromImage((Image)result))
+            {
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(b, 0, 0, nWidth, nHeight);
+                g.Dispose();
+            }
+            return result;
+        }
+
+
     }
 
 
 }
+
+
+
+
