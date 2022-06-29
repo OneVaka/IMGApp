@@ -177,7 +177,7 @@ namespace IMGApp
             for (int i = 0; i < images.Count; i++)
             {
                // Bitmap tmp = final_image.Clone(new Rectangle(0, 0, final_image.Width, final_image.Height), final_image.PixelFormat);    
-                final_image = MyImage.ChangeIMG(final_image, images[i], Oper.Proizv,i);
+                final_image = MyImage.ChangeIMG(final_image, images[i], ImageOperation.Proizv,i);
                // tmp.Dispose();
             }
 
@@ -211,7 +211,7 @@ namespace IMGApp
                         images[num-1] = new MyImage(new Bitmap(openFileDialog.FileName));
                     }
 
-                    images[num - 1].Operand = (Oper)Img1_regime.SelectedIndex;
+                    images[num - 1].Operand = (ImageOperation)Img1_regime.SelectedIndex;
 
                     Img1_picture.Image = images[num - 1].image;
                     Img1Box.Text = images[num - 1].image.Width + "x" + images[num - 1].image.Height;
@@ -232,7 +232,7 @@ namespace IMGApp
                     {
                         images[num-1] = new MyImage(new Bitmap(openFileDialog.FileName));
                     }
-                    images[num - 1].Operand = (Oper)Img2_regime.SelectedIndex;
+                    images[num - 1].Operand = (ImageOperation)Img2_regime.SelectedIndex;
 
                     Img2_picture.Image = images[num - 1].image;
                     Img2Box.Text = images[num - 1].image.Width + "x" + images[num - 1].image.Height;
@@ -250,7 +250,7 @@ namespace IMGApp
                     {
                         images[num - 1] = new MyImage(new Bitmap(openFileDialog.FileName));
                     }
-                    images[num - 1].Operand = (Oper)Img3_regime.SelectedIndex;
+                    images[num - 1].Operand = (ImageOperation)Img3_regime.SelectedIndex;
 
                     Img3_picture.Image = images[num - 1].image;
                     Img3Box.Text = images[num - 1].image.Width + "x" + images[num - 1].image.Height;
@@ -270,7 +270,7 @@ namespace IMGApp
                     {
                         images[num - 1] = new MyImage(new Bitmap(openFileDialog.FileName));
                     }
-                    images[num - 1].Operand = (Oper)Img4_regime.SelectedIndex;
+                    images[num - 1].Operand = (ImageOperation)Img4_regime.SelectedIndex;
 
                     Img4_picture.Image = images[num-1].image;
                     Img4Box.Text = images[num - 1].image.Width + "x" + images[num - 1].image.Height;
@@ -407,7 +407,7 @@ namespace IMGApp
                 return;
             else
             {
-                images[0].Operand = (Oper)Img1_regime.SelectedIndex;
+                images[0].Operand = (ImageOperation)Img1_regime.SelectedIndex;
                 new_picture();
 
             }
@@ -421,7 +421,7 @@ namespace IMGApp
                 return;
             else
             {
-                images[1].Operand = (Oper)Img2_regime.SelectedIndex;
+                images[1].Operand = (ImageOperation)Img2_regime.SelectedIndex;
                 new_picture();
             }
 
@@ -433,7 +433,7 @@ namespace IMGApp
                 return;
             else
             {
-                images[2].Operand = (Oper)Img3_regime.SelectedIndex;
+                images[2].Operand = (ImageOperation)Img3_regime.SelectedIndex;
                 new_picture();
 
             }
@@ -446,7 +446,7 @@ namespace IMGApp
                 return;
             else
             {
-                images[3].Operand = (Oper)Img4_regime.SelectedIndex;
+                images[3].Operand = (ImageOperation)Img4_regime.SelectedIndex;
                 new_picture();
 
             }

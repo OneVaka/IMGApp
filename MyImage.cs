@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace IMGApp
 {
 
-    enum Oper {
+    enum ImageOperation {
         Normal,
         Add,
         Proizv,
@@ -28,11 +28,11 @@ namespace IMGApp
 
         public Bitmap image;
 
-        private Oper operand = Oper.Normal;
+        private ImageOperation operand = ImageOperation.Normal;
 
         public bool Red = true, Green = false, Blue = false;
 
-        public Oper Operand {
+        public ImageOperation Operand {
             set { operand = value; }
             get { return operand; }
             }
@@ -58,7 +58,7 @@ namespace IMGApp
 
         }
 
-        public static Bitmap ChangeIMG(Bitmap img1, MyImage img2, Oper check, int num)
+        public static Bitmap ChangeIMG(Bitmap img1, MyImage img2, ImageOperation check, int num)
         {
 
 
@@ -110,33 +110,33 @@ namespace IMGApp
 
                     switch (img2.Operand)
                     {
-                        case Oper.Normal:
+                        case ImageOperation.Normal:
                             r_new = pix_two.R;
                             g_new = pix_two.G;
                             b_new = pix_two.B;
                             break;
 
-                        case Oper.Add:
+                        case ImageOperation.Add:
                             r_new = (int)Clamp(pix_one.R + pix_two.R, 0, 255);
                             g_new = (int)Clamp(pix_one.G + pix_two.G, 0, 255);
                             b_new = (int)Clamp(pix_one.B + pix_two.B, 0, 255);
                             break;
-                        case Oper.SredneArth:
+                        case ImageOperation.SredneArth:
                             r_new = (int)Clamp((pix_one.R + pix_two.R) / 2, 0, 255);
                             g_new = (int)Clamp((pix_one.G + pix_two.G) / 2, 0, 255);
                             b_new = (int)Clamp((pix_one.B + pix_two.B) / 2, 0, 255);
                             break;
-                        case Oper.Max:
+                        case ImageOperation.Max:
                             r_new = (int)Clamp(Math.Max(pix_one.R, pix_two.R), 0, 255);
                             g_new = (int)Clamp(Math.Max(pix_one.G, pix_two.G), 0, 255);
                             b_new = (int)Clamp(Math.Max(pix_one.B, pix_two.B), 0, 255);
                             break;
-                        case Oper.Min:
+                        case ImageOperation.Min:
                             r_new = (int)Clamp(Math.Min(pix_one.R, pix_two.R), 0, 255);
                             g_new = (int)Clamp(Math.Min(pix_one.G, pix_two.G), 0, 255);
                             b_new = (int)Clamp(Math.Min(pix_one.B, pix_two.B), 0, 255);
                             break;
-                        case Oper.Proizv:
+                        case ImageOperation.Proizv:
                             r_new = (int)Clamp((pix_one.R * pix_two.R) / 255, 0, 255);
                             g_new = (int)Clamp((pix_one.R * pix_two.R) / 255, 0, 255);
                             b_new = (int)Clamp((pix_one.R * pix_two.R) / 255, 0, 255);
@@ -159,7 +159,7 @@ namespace IMGApp
             }
 
 
-            if (img2.operand == Oper.Mask)
+            if (img2.operand == ImageOperation.Mask)
             {
                 var img_mask = new Bitmap(w, h);
 
