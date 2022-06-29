@@ -1,7 +1,7 @@
 ﻿
 namespace IMGApp.AppForms
 {
-    partial class Form3
+    partial class Form_binarization
     {
         /// <summary>
         /// Required designer variable.

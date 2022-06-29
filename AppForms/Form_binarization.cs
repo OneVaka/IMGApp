@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace IMGApp.AppForms
 {
-    public partial class Form3 : Form
+    public partial class Form_binarization : Form
     {
 
         Bitmap imageOriginal = null;
@@ -19,7 +19,7 @@ namespace IMGApp.AppForms
         Bitmap imageMono = null;
 
 
-        public Form3()
+        public Form_binarization()
         {
             InitializeComponent();
 

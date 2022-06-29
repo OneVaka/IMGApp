@@ -21,7 +21,7 @@ namespace IMGApp.AppForms
         {
             try
             {
-                Form1 overlap_window = new Form1();
+                Form_overlap overlap_window = new Form_overlap();
                 overlap_window.Show();
             }
             catch
@@ -35,7 +35,7 @@ namespace IMGApp.AppForms
         {
             try
             {
-                Form2 graph_window = new Form2();
+                Form_graph graph_window = new Form_graph();
                 graph_window.Show();
             }
             catch
@@ -49,7 +49,7 @@ namespace IMGApp.AppForms
         {
             try
             {
-                Form3 binarization_window = new Form3();
+                Form_binarization binarization_window = new Form_binarization();
                 binarization_window.Show();
             }
             catch
@@ -63,7 +63,7 @@ namespace IMGApp.AppForms
         {
             try
             {
-                Form4 mask_window = new Form4();
+                Form_masking mask_window = new Form_masking();
                 mask_window.Show();
             }
             catch
@@ -77,7 +77,7 @@ namespace IMGApp.AppForms
         {
             try
             {
-                Form5 fourier_window = new Form5();
+                Form_fourier fourier_window = new Form_fourier();
                 fourier_window.Show();
             }
             catch

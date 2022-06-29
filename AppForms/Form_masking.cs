@@ -12,12 +12,12 @@ using System.Windows.Forms;
 
 namespace IMGApp.AppForms
 {
-    public partial class Form4 : Form
+    public partial class Form_masking : Form
     {
         Bitmap image_original = null;
         Bitmap image_modified = null;
 
-        public Form4()
+        public Form_masking()
         {
             InitializeComponent();
         }

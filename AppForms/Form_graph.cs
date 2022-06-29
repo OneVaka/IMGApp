@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace IMGApp.AppForms
 {
-    public partial class Form2 : Form
+    public partial class Form_graph : Form
     {
 
         Bitmap imageOriginal = null;
@@ -25,7 +25,7 @@ namespace IMGApp.AppForms
 
         static List<Point> graphPointsList = new List<Point>();
 
-        public Form2()
+        public Form_graph()
         {
             InitializeComponent();
             this.pictureBox1.Image = image;

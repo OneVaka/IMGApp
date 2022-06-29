@@ -1,7 +1,7 @@
 ﻿
 namespace IMGApp.AppForms
 {
-    partial class Form2
+    partial class Form_graph
     {
         /// <summary>
         /// Required designer variable.

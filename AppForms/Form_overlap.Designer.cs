@@ -1,7 +1,7 @@
 ﻿
 namespace IMGApp.AppForms
 {
-    partial class Form1
+    partial class Form_overlap
     {
         /// <summary>
         ///  Required designer variable.

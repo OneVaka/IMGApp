@@ -1,6 +1,6 @@
 ﻿namespace IMGApp.AppForms
 {
-    partial class Form4
+    partial class Form_masking
     {
         /// <summary>
         /// Required designer variable.

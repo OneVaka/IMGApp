@@ -19,9 +19,9 @@ using System.Drawing.Drawing2D;
 
 namespace IMGApp.AppForms
 {
-    public partial class Form5 : Form
+    public partial class Form_fourier : Form
     {
-        public Form5()
+        public Form_fourier()
         {
             InitializeComponent();
         }

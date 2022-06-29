@@ -1,6 +1,6 @@
 ﻿namespace IMGApp.AppForms
 {
-    partial class Form5
+    partial class Form_fourier
     {
         /// <summary>
         /// Required designer variable.

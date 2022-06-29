@@ -15,7 +15,7 @@ using System.IO;
 
 namespace IMGApp.AppForms
 {
-    public partial class Form1 : Form
+    public partial class Form_overlap : Form
     {
 
         private Bitmap image1 = null;
@@ -27,7 +27,7 @@ namespace IMGApp.AppForms
 
         
 
-        public Form1()
+        public Form_overlap()
         {
             InitializeComponent();
             
