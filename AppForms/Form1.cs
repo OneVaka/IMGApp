@@ -13,7 +13,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.IO;
 
-namespace IMGApp
+namespace IMGApp.AppForms
 {
     public partial class Form1 : Form
     {
@@ -30,23 +30,7 @@ namespace IMGApp
         public Form1()
         {
             InitializeComponent();
-            try
-            {
-                Form2 form2 = new Form2();
-                //form2.Show();
-                Form3 form3 = new Form3();
-                //form3.Show();
-                Form4 form4 = new Form4();
-                form4.Show();
-                Form5 form5 = new Form5();
-                form5.Show();
-            }
-            catch
-            {
-                //ErrorManager.ErrorOK("Произошла непредвиденная ошибка!");
-                MessageBox.Show("error!");
-                Application.Exit();
-            }
+            
         }
 
         void finalize_picture()

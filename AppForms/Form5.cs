@@ -17,7 +17,7 @@ using System.Windows.Forms;
 using System.Drawing.Drawing2D;
 
 
-namespace IMGApp
+namespace IMGApp.AppForms
 {
     public partial class Form5 : Form
     {

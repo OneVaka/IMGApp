@@ -1,4 +1,4 @@
-﻿namespace IMGApp
+﻿namespace IMGApp.AppForms
 {
     partial class Form5
     {

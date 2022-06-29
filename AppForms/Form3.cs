@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IMGApp
+namespace IMGApp.AppForms
 {
     public partial class Form3 : Form
     {
@@ -25,8 +25,6 @@ namespace IMGApp
 
             pictureBox1.Image = imageOriginal;
             pictureBox2.Image = imageBinar;  
-
-            
 
 
         }

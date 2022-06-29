@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IMGApp
+namespace IMGApp.AppForms
 {
     public partial class Form4 : Form
     {
@@ -287,6 +287,10 @@ namespace IMGApp
             {
                 for (int j = 0; j < custom_mask.GetLength(1); j++)
                 {
+                    //System.FormatException: "Input string was not in a correct format."
+                    //TODO
+
+
                     custom_mask[i, j] = Convert.ToDouble(custom_mask_Grid.Rows[j].Cells[i].Value);
                 }
             }
